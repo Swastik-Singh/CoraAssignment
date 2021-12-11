@@ -20,7 +20,7 @@ For running the project on an iOS device, you need to navigate to ios directory 
 
     `pod install`
 
-If you are not familiar with this command, read this article to understand more about it.
+If you are not familiar with this command, read this article to understand more about it [Using Cocoapods on Windows](https://airtdave.medium.com/using-cocoapods-on-windows-dec471735f51).
 
 ## Run Project
 
