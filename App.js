@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -43,9 +43,25 @@ const App = () => {
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8F1S4mqCspa8d0lI93IEQCNf2FaRy5TLOZQ&usqp=CAU',
   ];
 
+  const [buttonPosition, setButtonPosition] = useState(0);
+  const [hideButton, setHideButton] = useState(false);
+
+  const calculateButtonPosition = ev => {
+    ev.target.measure((x, y, width, height, pageX, pageY) => {
+      setButtonPosition(pageY - SCREEN.height);
+    });
+  };
+
+  const calculateScrollPosition = ev => {
+    const scrollVerticaLPosition = ev.nativeEvent.contentOffset.y;
+    setHideButton(scrollVerticaLPosition > buttonPosition);
+  };
+
   return (
     <SafeAreaView>
       <ScrollView
+        onScroll={calculateScrollPosition}
+        scrollEventThrottle={10}
         contentInsetAdjustmentBehavior="automatic"
         style={styles.backgroundStyle}>
         <View style={styles.imageContainer}>
@@ -79,7 +95,9 @@ const App = () => {
           was the snow that killed the other two, but it wasn't. Nature is
           lethal but it doesn't hold a candle to man.
         </Text>
-        <Button style={styles.addToCart} title="ADD TO CART" />
+        <View onLayout={calculateButtonPosition}>
+          <Button style={styles.addToCartButton} title="ADD TO CART" />
+        </View>
         <Section
           title="Delivery Date"
           description="Estimated delivery by 18th December 2021"
@@ -102,7 +120,10 @@ const App = () => {
           keyExtractor={item => item}
         />
       </ScrollView>
-      <FAB style={styles.addToCart} icon="shoppingcart" />
+      <FAB
+        label="ADD TO CART"
+        style={hideButton ? styles.addToCartHidden : styles.addToCart}
+      />
     </SafeAreaView>
   );
 };
@@ -193,11 +214,24 @@ const styles = StyleSheet.create({
     borderColor: 'lightgrey',
     padding: 6,
   },
+  addToCartButton: {
+    width: WIDTH,
+    height: 50,
+    backgroundColor: 'dodgerblue',
+  },
   addToCart: {
-    backgroundColor: 'teal',
+    backfaceVisibility: 'visible',
+    backgroundColor: 'dodgerblue',
     position: 'absolute',
     bottom: 0,
-    right: 16,
+    borderRadius: 0,
+    color: 'white',
+    width: WIDTH,
+    height: 40,
+    textAlign: 'center',
+  },
+  addToCartHidden: {
+    backfaceVisibility: 'hidden',
   },
   description: {
     margin: 8,
